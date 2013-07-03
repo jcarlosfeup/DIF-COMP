@@ -1,0 +1,61 @@
+#!/bin/bash
+
+
+#goes to file directory
+cd `dirname $(readlink -f $0)`
+cd ../../
+
+echo "
+======================= checking files  ==============================
+" >> testes/result.txt
+
+
+for file in testes/input/arvore*.dif
+do
+	basename=`basename "$file"`
+if [ -f testes/expected/$basename.txt ] ; then
+	FileDiff=("${FileDiff[@]}" "$basename")
+else
+	echo "Warning: $basename.txt doesnt exist on the expected output folder">> testes/result.txt
+fi
+
+done
+
+echo "
+${#FileDiff[@]} files to test:
+ ${FileDiff[@]}
+
+=======================  running tests  ==============================
+" >> testes/result.txt
+
+
+for file in ${FileDiff[@]}
+do
+	`java dif testes/input/$file 1>testes/output/$file.txt`
+
+	if `diff testes/output/$file.txt testes/expected/$file.txt >/dev/null` ; then
+		echo "$file passed" >> testes/result.txt
+	else
+  		echo "$file failed
+
+=======================   output file   ==============================
+
+`cat testes/output/$file.txt`
+
+=======================  expected file  ==============================
+
+`cat testes/expected/$file.txt`
+			
+" >> testes/result.txt
+cat testes/result.txt
+exit 0
+	fi
+
+done
+
+echo "
+=========================  all passed  ===============================
+" >> testes/result.txt
+cat testes/result.txt
+
+

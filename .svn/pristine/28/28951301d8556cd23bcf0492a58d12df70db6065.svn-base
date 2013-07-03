@@ -1,0 +1,17 @@
+//	teste2
+dif Graph{
+	basedon{
+		graphID;	
+	}
+	topology{
+		nodes = n1, n2, n3;
+		edges = e1 (n1, n3), e2 (n2, n3);	
+	}
+	basedon{
+		graphID;	
+	}
+	topology{
+		nodes = n1, n2, n3;
+		edges = e1 (n1, n3), e2 (n2, n3);	
+	}
+}

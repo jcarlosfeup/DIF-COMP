@@ -1,0 +1,205 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+ 
+options
+{
+	LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(eg1)
+import java.io.*;
+ 
+
+public class eg1
+{
+	
+	
+public static void main(String args []) throws ParseException
+  {
+
+   FileInputStream input_file = null;
+
+	try {
+		input_file = new FileInputStream(args[0]);
+/*
+		int read = 0;
+		byte[] bytes = new byte[1024];
+
+		while((read = input_file.read(bytes)) != -1){
+
+			System.out.write(bytes,0,read);
+		}
+
+		input_file.close();
+
+*/
+
+	} catch (FileNotFoundException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}    //eg1 parser = new eg1(System.in);
+
+	catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    eg1 parser = new eg1(input_file);
+
+
+      SimpleNode root = parser.sintax_analyse();
+		root.dump("");
+    
+  }
+}
+
+PARSER_END(eg1)
+
+SKIP :
+{
+ < IGNORE :  " " | < COMMENT > | < BLANK > >
+}
+
+
+TOKEN : /*comments*/
+{ 
+ < COMMENT	:	< LONG_COMMENT > | < SHORT_COMMENT > >
+| < LONG_COMMENT	:	"/*"( (< NOT_STAR >)* "*" | ( < NOT_STAR_SLASH > (< NOT_STAR >)* ("*")+ ) )* "/" >  /**/
+| < SHORT_COMMENT	:	"//" (< NOT_CR_LF >)* < EOL > >
+}
+
+TOKEN : /*tokens */
+{
+< L_BKT	:	"{" >
+| < R_BKT	:	"}" >
+| < L_PAR	:	"(" >
+| < R_PAR	:	")" >
+| < L_SQR	:	"[" >
+| < R_SQR	:	"]" >
+| < SEMICOLON	:	";" >
+| < COLON	:	":" >
+| < COMMA	:	"," >
+| < S_QTE	:	"\"" >
+| < PLUS	:	"+" >
+| < EQUAL	:	"=" >
+| < DOT	:	"." >
+| < GRAPH	:	"graph" >
+| < ATTRIBUTE	:	"attribute" >
+| < BASEDON	:	"basedon" >
+| < INTERFACE	:	"interface" >
+| < PARAMETER	:	"parameter" >
+| < REFINEMENT	:	"refinement" >
+| < TOPOLOGY	:	"topology" >
+| < ACTOR	:	"actor" >
+| < INPUTS	:	"inputs" >
+| < OUTPUTS	:	"outputs" >
+| < NODES	:	"nodes" >
+| < EDGES	:	"edges" >
+| < TRUE	:	"true" >
+| < FALSE	:	"false" >
+| < STRING	:	"\"" (< S_CHAR >)* "\"" >
+| < STRING_TAIL	:	"+" ( " " | "\n" | "\t" ) * "\""  (< S_CHAR >)* "\"" >
+| < IDENTIFIER	:	< NON_DIGIT > ( < DIGIT > | < NON_DIGIT > )* >
+| < STRING_IDENTIFIER	:	"$"  (< S_CHAR >)* "$" >
+}
+
+
+TOKEN : /*helpers */
+{
+ < S_CHAR	:	~[ "\"", "$" , "\\", "\r" , "\n" ]  | < ESCAPE_SEQUENCE > >
+| < ESCAPE_SEQUENCE	:	< SIMPLE_ESCAPE_SEQUENCE > | < OCTAL_ESCAPE_SEQUENCE > | < HEXADECIMAL_ESCAPE_SEQUENCE > >
+| < HEXADECIMAL_ESCAPE_SEQUENCE	:	"\\x" (< HEXADECIMAL_DIGIT >)+ >
+| < HEXADECIMAL_DIGIT	:	< DIGIT > | [ "a" - "f", "A" - "F"] >
+| < OCTAL_ESCAPE_SEQUENCE	:"\\" < OCTAL_DIGIT > (< OCTAL_DIGIT >)? (< OCTAL_DIGIT >) ? >
+| < OCTAL_DIGIT	:	[ "0" - "7" ] >
+| < SIMPLE_ESCAPE_SEQUENCE	:	"\"" | "\\" | "\b" | "\f" | "\n" | "\r" | "\t" >
+| < NOT_STAR_SLASH : ~[ "*" , "/" ] >
+| < NOT_STAR : ~["*"] >
+| < NOT_CR_LF : ~["\r" , "\n" ] >
+| <	BLANK : ( " " | "\t" | < EOL > ) > 
+| < EOL	:	"\r\n" | "\r" | "\n" > 
+| < INTEGER	:	( "+" | "-" ) ? (< DIGIT >)+ >
+| < DOUBLE	:	( "+" | "-" ) ? ( < DIGIT >)* "." (< DIGIT >)+ ( ( "e" | "E" ) ( "+" | "-" )? (< DIGIT >)+ ) ? >
+| < NON_DIGIT	:	["a" - "z", "A" - "Z", "_"] >
+| < DIGIT	:	[ "0" - "9" ] >
+| < ALL	: ["\u0000" - "\u007f"] >
+}
+
+//Os comentarios em cima dos tokens são os resultados esperados sendo $ com tenho a frente
+// um identificador para um token ( Omar Castro )
+
+SimpleNode sintax_analyse() :{}
+{
+graph_list() {return jjtThis;}
+}
+
+void graph_list() :{}
+{
+  ( graph_block() )*
+}
+
+void graph_block() :
+{}
+{
+ 		< IDENTIFIER > name() <L_BKT> ( block() )* <R_BKT>
+}
+
+void name(): {Token t1;}
+{
+	t1=<IDENTIFIER>{jjtThis.val = t1.image;} | t1=< STRING_IDENTIFIER >{jjtThis.val = t1.image;}
+}
+//
+void block(): {}
+{  // basedon { (basedonExpression)* } | topology { ($topologyList)* }
+	<BASEDON> basedon_body() | <TOPOLOGY> topology_body()
+}
+
+
+void basedon_body(): {}
+{  // { ($basedonExpression)* }
+	< L_BKT > basedon_expression()  < R_BKT >
+
+}
+
+void basedon_expression()#void: {}
+{	//$name ;
+	name() < SEMICOLON >
+} 	
+
+void topology_body() #void: {}
+{
+  // { ($topologyList)* }
+	< L_BKT > (topology_list())*  < R_BKT >
+}
+
+void topology_list(): {}
+{
+  ( // nodes = $nodeDefinition ( , $nodeDefinition )* ;
+    < NODES > <EQUAL > name() (node_identifier_tail())* < SEMICOLON >
+	)|( // edges = $edgeDefinition ( , $edgeDefinition )* ;
+	 < EDGES > <EQUAL > edge_definition() (edge_definition_tail())* < SEMICOLON >
+	)
+} 	
+
+void node_identifier_tail() #void: {}
+{
+  // , $nodeDefinition
+  < COMMA > name()
+}
+
+void edge_definition(): {}
+{
+  // $edgeName ( $sourceName , $sinkName  )
+  name() < L_PAR > name() < COMMA > name() < R_PAR > 
+}
+
+void edge_definition_tail()#void: {}
+{
+  // ; $edgeDefinition
+  < COMMA > edge_definition()
+}
+
+
+
+

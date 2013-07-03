@@ -1,0 +1,16 @@
+#!/bin/bash
+# only saves java tree outputs to outupt folder
+
+###goes to java main dir
+
+#goes to file directory
+cd `dirname $(readlink -f $0)`
+cd ../../
+
+for file in testes/input/arvore*.dif
+do
+	basename=`basename "$file"`
+	echo $basename
+	`java dif testes/input/$basename 1>testes/output/$basename.txt`
+done
+

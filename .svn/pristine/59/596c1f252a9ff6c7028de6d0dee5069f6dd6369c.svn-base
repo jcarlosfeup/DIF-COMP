@@ -1,0 +1,10 @@
+digraph G2 {
+subgraph cluster_G1 {
+n1 -> n3 [label=e1]
+n2 -> n3 [label=e2]
+}
+n4 -> n1 [label=e3]
+n5 -> n2 [label=e4]
+n3 -> n7 [label=e5]
+}
+

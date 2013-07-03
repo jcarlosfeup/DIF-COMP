@@ -1,0 +1,15 @@
+all: javac
+
+run:
+	java eg1 teste.txt
+	java eg1 teste2.txt
+
+javac: javacc
+	javac *.java
+
+javacc: jjtree
+	javacc DIF.jj
+
+jjtree:
+	jjtree DIF.jjt
+

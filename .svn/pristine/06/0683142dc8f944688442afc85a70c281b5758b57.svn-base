@@ -1,0 +1,24 @@
+dif G1 {
+topology {
+nodes = n1, n2, n3;
+edges = e1 (n1, n3), e2 (n2, n3);
+}
+interface {
+inputs = p1 : n1, p2 : n2;
+outputs = p3 : n3;
+}
+}
+
+
+
+dif G2 {
+topology {
+nodes = n4, n5, n6, n7;
+edges = e3 (n4, n6),
+e4 (n5, n6), e5 (n6, n7);
+}
+refinement {
+G1 = n6;
+p1 : e3; p2 : e4; p3 : e5;
+}
+}

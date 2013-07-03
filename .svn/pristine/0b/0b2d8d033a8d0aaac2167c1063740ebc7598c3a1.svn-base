@@ -1,0 +1,17 @@
+psdf decimateBody {
+topology { nodes = dnSmpl; }
+interface {
+inputs = b:dnSmpl;
+outputs = c:dnSmpl;
+}
+parameter {
+factor;
+phase;
+hurr : "int" = 10;
+range : "var" : {49,9,897,4};
+random : (20,30];
+
+}
+consumption { b = factor; }
+production { c = 1; }
+}

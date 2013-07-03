@@ -1,0 +1,253 @@
+sintax_analyse
+ graph_list
+  graph_block
+   name
+	[ decimateSubinit ]
+   block
+    topology_list
+     name
+	[ Propagate ]
+   block
+    interface_expression
+     port_definition
+      name
+	[ a ]
+      name
+	[ Propagate ]
+    interface_expression
+     port_definition
+      name
+	[ d ]
+      name
+	[ Propagate ]
+   block
+    attribute_expression
+     name
+	[ a ]
+     value
+	[ 1 ]
+   block
+    attribute_expression
+     name
+	[ d ]
+     value
+	[ 1 ]
+  graph_block
+   name
+	[ decimateInit ]
+   block
+    topology_list
+     name
+	[ rndInt2 ]
+   block
+    interface_expression
+     port_definition
+      name
+	[ e ]
+      name
+	[ rndInt2 ]
+   block
+    attribute_expression
+     name
+	[ e ]
+     value
+	[ 1 ]
+  graph_block
+   name
+	[ decimateBody ]
+   block
+    topology_list
+     name
+	[ dnSmpl ]
+   block
+    interface_expression
+     port_definition
+      name
+	[ b ]
+      name
+	[ dnSmpl ]
+    interface_expression
+     port_definition
+      name
+	[ c ]
+      name
+	[ dnSmpl ]
+   block
+    parameter_expression
+     name
+	[ factor ]
+    parameter_expression
+     name
+	[ phase ]
+   block
+    attribute_expression
+     name
+	[ b ]
+     name
+	[ factor ]
+   block
+    attribute_expression
+     name
+	[ c ]
+     value
+	[ 1 ]
+  graph_block
+   name
+	[ decimate ]
+   block
+    interface_expression
+     port_definition
+      name
+	[ A ]
+      name
+	[ subinit ]
+     port_definition
+      name
+	[ B ]
+      name
+	[ body ]
+    interface_expression
+     port_definition
+      name
+	[ C ]
+      name
+	[ body ]
+   block
+    refinement_body
+     refinement_definition
+      name
+	[ decimateInit ]
+      name
+	[ init ]
+   block
+    refinement_body
+     refinement_definition
+      name
+	[ decimateSubinit ]
+      name
+	[ subinit ]
+     refinement_expression
+      name
+	[ a ]
+      name
+	[ A ]
+   block
+    refinement_body
+     refinement_definition
+      name
+	[ decimateBody ]
+      name
+	[ body ]
+     refinement_expression
+      name
+	[ b ]
+      name
+	[ B ]
+     refinement_expression
+      name
+	[ c ]
+      name
+	[ C ]
+   block
+    attribute_expression
+     name
+	[ decimateBody ]
+     name
+	[ factor ]
+     name
+	[ decimateInit ]
+     name
+	[ e ]
+    attribute_expression
+     name
+	[ decimateBody ]
+     name
+	[ phase ]
+     name
+	[ decimateSubinit ]
+     name
+	[ d ]
+  graph_block
+   name
+	[ exampleBody ]
+   block
+    topology_list
+     name
+	[ rndInt5 ]
+     name
+	[ rndInt1 ]
+     name
+	[ decimate ]
+     name
+	[ print ]
+    topology_list
+     edge_definition
+      name
+	[ e1 ]
+      name
+	[ rndInt5 ]
+      name
+	[ decimate ]
+     edge_definition
+      name
+	[ e2 ]
+      name
+	[ rndInt1 ]
+      name
+	[ decimate ]
+     edge_definition
+      name
+	[ e3 ]
+      name
+	[ decimate ]
+      name
+	[ print ]
+   block
+    refinement_body
+     refinement_definition
+      name
+	[ decimate ]
+      name
+	[ decimate ]
+     refinement_expression
+      name
+	[ A ]
+      name
+	[ e1 ]
+     refinement_expression
+      name
+	[ B ]
+      name
+	[ e2 ]
+     refinement_expression
+      name
+	[ C ]
+      name
+	[ e3 ]
+   block
+    attribute_expression
+     name
+	[ e1 ]
+     value
+	[ 5 ]
+    attribute_expression
+     name
+	[ e2 ]
+     value
+	[ 1 ]
+   block
+    attribute_expression
+     name
+	[ e3 ]
+     value
+	[ 1 ]
+  graph_block
+   name
+	[ example ]
+   block
+    refinement_body
+     refinement_definition
+      name
+	[ decimate ]
+      name
+	[ body ]

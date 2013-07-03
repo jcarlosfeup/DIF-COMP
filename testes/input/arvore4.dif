@@ -1,0 +1,56 @@
+bdf bdfDemo1 {
+topology {
+nodes = SRC, SWITCH, SELECT, SINK, CONTROL, BROADCAST, ACTOR1, ACTOR2;
+edges = e1(SRC,SWITCH), e2(SRC,CONTROL), e3(CONTROL,BROADCAST),
+e4(BROADCAST,SWITCH), e5(BROADCAST,SELECT), e6(SWITCH,ACTOR1),
+e7(SWITCH,ACTOR2), e8(ACTOR1,SELECT), e9(ACTOR2,SELECT),
+e10(SELECT,SINK);
+}
+production {
+e1=1; e2=1; e3=1; e4=1; e5=1; e6=[1,0]; e7=[0,1]; e8=1; e9=1; e10=1;
+}
+consumption {
+e1=1; e2=1; e3=1; e4=1; e5=1; e6=1; e7=1; e8=[1,0]; e9=[0,1]; e10=1;
+}
+
+//parte modificada
+
+actor SWITCH {
+computation = "dif.bdf.SWITCH";
+control : CONTROL = e4;
+input : INPUT = e1;
+trues : TRUEOUTPUT = e6;
+falses : FALSEOUTPUT = e7;
+}
+actor SELECT {
+computation = "dif.bdf.SELECT";
+control : CONTROL = e5;
+output : OUTPUT = e10;
+trues : TRUEOUTPUT = e8;
+falses : FALSEOUTPUT = e9;
+}
+
+// acaba a parte modificada
+
+}
+
+/*
+
+parte original (com provaveis erros)
+
+actor SWITCH {
+computation; = dif.bdf.SWITCH;
+control : CONTROL = e4;
+input : INPUT = e1;
+true : TRUEOUTPUT = e6;
+false : FALSEOUTPUT = e7;
+}
+actor SELECT {
+computation; = dif.bdf.SELECT;
+control : CONTROL = e5;
+output : OUTPUT = e10;
+true : TRUEOUTPUT = e8;
+false : FALSEOUTPUT = e9;
+}
+
+*/

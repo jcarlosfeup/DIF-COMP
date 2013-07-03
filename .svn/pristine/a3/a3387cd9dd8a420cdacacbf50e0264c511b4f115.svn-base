@@ -1,0 +1,250 @@
+sintax_analyse
+ graph_list
+  graph_block
+   name
+	[ bdfDemo1 ]
+   block
+    topology_list
+     name
+	[ SRC ]
+     name
+	[ SWITCH ]
+     name
+	[ SELECT ]
+     name
+	[ SINK ]
+     name
+	[ CONTROL ]
+     name
+	[ BROADCAST ]
+     name
+	[ ACTOR1 ]
+     name
+	[ ACTOR2 ]
+    topology_list
+     edge_definition
+      name
+	[ e1 ]
+      name
+	[ SRC ]
+      name
+	[ SWITCH ]
+     edge_definition
+      name
+	[ e2 ]
+      name
+	[ SRC ]
+      name
+	[ CONTROL ]
+     edge_definition
+      name
+	[ e3 ]
+      name
+	[ CONTROL ]
+      name
+	[ BROADCAST ]
+     edge_definition
+      name
+	[ e4 ]
+      name
+	[ BROADCAST ]
+      name
+	[ SWITCH ]
+     edge_definition
+      name
+	[ e5 ]
+      name
+	[ BROADCAST ]
+      name
+	[ SELECT ]
+     edge_definition
+      name
+	[ e6 ]
+      name
+	[ SWITCH ]
+      name
+	[ ACTOR1 ]
+     edge_definition
+      name
+	[ e7 ]
+      name
+	[ SWITCH ]
+      name
+	[ ACTOR2 ]
+     edge_definition
+      name
+	[ e8 ]
+      name
+	[ ACTOR1 ]
+      name
+	[ SELECT ]
+     edge_definition
+      name
+	[ e9 ]
+      name
+	[ ACTOR2 ]
+      name
+	[ SELECT ]
+     edge_definition
+      name
+	[ e10 ]
+      name
+	[ SELECT ]
+      name
+	[ SINK ]
+   block
+    attribute_expression
+     name
+	[ e1 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e2 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e3 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e4 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e5 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e6 ]
+     value
+      numeric_row
+       number
+	[ 1 ]
+       number
+	[ 0 ]
+    attribute_expression
+     name
+	[ e7 ]
+     value
+      numeric_row
+       number
+	[ 0 ]
+       number
+	[ 1 ]
+    attribute_expression
+     name
+	[ e8 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e9 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e10 ]
+     value
+	[ 1 ]
+   block
+    attribute_expression
+     name
+	[ e1 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e2 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e3 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e4 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e5 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e6 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e7 ]
+     value
+	[ 1 ]
+    attribute_expression
+     name
+	[ e8 ]
+     value
+      numeric_row
+       number
+	[ 1 ]
+       number
+	[ 0 ]
+    attribute_expression
+     name
+	[ e9 ]
+     value
+      numeric_row
+       number
+	[ 0 ]
+       number
+	[ 1 ]
+    attribute_expression
+     name
+	[ e10 ]
+     value
+	[ 1 ]
+   block
+    name
+	[ SWITCH ]
+    actor_body
+     actor_expression
+      name
+	[ computation ]
+      value
+       concatenated_string_value
+	[ null ]
+     actor_expression
+      name
+	[ control ]
+      type
+	[ CONTROL ]
+      name
+	[ e5 ]
+     actor_expression
+      name
+	[ output ]
+      type
+	[ OUTPUT ]
+      name
+	[ e10 ]
+     actor_expression
+      name
+	[ trues ]
+      type
+	[ TRUEOUTPUT ]
+      name
+	[ e8 ]
+     actor_expression
+      name
+	[ falses ]
+      type
+	[ FALSEOUTPUT ]
+      name
+	[ e9 ]

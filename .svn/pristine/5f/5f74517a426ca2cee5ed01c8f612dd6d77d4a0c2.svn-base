@@ -1,0 +1,408 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+ 
+options
+{
+  LOOKAHEAD = 2;
+}
+
+PARSER_BEGIN(eg1)
+import java.io.*;
+ 
+
+public class eg1
+{
+	
+	
+public static void main(String args []) throws ParseException
+  {
+
+   FileInputStream input_file = null;
+
+	try {
+		input_file = new FileInputStream("ex.txt");
+/*
+		int read = 0;
+		byte[] bytes = new byte[1024];
+
+		while((read = input_file.read(bytes)) != -1){
+
+			System.out.write(bytes,0,read);
+		}
+
+		input_file.close();
+
+*/
+
+	} catch (FileNotFoundException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}    //eg1 parser = new eg1(System.in);
+
+	catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+    eg1 parser = new eg1(input_file);
+
+	try
+      {
+        parser.sintax_analyse();
+         System.out.print("\nLeitura Concluida!");
+      }
+      catch (Exception e)
+      {
+        System.out.println("NOK.");
+        System.out.println(e.getMessage());
+        parser.ReInit(System.in);
+      }
+      catch (Error e)
+      {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+      }
+    
+  }
+}
+
+PARSER_END(eg1)
+
+SKIP :
+{
+ < IGNORE :  " " | < COMMENT > | < BLANK > >
+}
+
+
+TOKEN : /*comments*/
+{ 
+ < COMMENT	:	< LONG_COMMENT > | < SHORT_COMMENT > >
+| < LONG_COMMENT	:	"/*"( (< NOT_STAR >)* "*" | ( < NOT_STAR_SLASH > (< NOT_STAR >)* ("*")+ ) )* "/" >  /**/
+| < SHORT_COMMENT	:	"//" (< NOT_CR_LF >)* < EOL > >
+}
+
+TOKEN : /*tokens */
+{
+< L_BKT	:	"{" >
+| < R_BKT	:	"}" >
+| < L_PAR	:	"(" >
+| < R_PAR	:	")" >
+| < L_SQR	:	"[" >
+| < R_SQR	:	"]" >
+| < SEMICOLON	:	";" >
+| < COLON	:	":" >
+| < COMMA	:	"," >
+| < S_QTE	:	"\"" >
+| < PLUS	:	"+" >
+| < EQUAL	:	"=" >
+| < DOT	:	"." >
+| < GRAPH	:	"graph" >
+| < ATTRIBUTE	:	"attribute" >
+| < BASEDON	:	"basedon" >
+| < INTERFACE	:	"interface" >
+| < PARAMETER	:	"parameter" >
+| < REFINEMENT	:	"refinement" >
+| < TOPOLOGY	:	"topology" >
+| < ACTOR	:	"actor" >
+| < INPUTS	:	"inputs" >
+| < OUTPUTS	:	"outputs" >
+| < NODES	:	"nodes" >
+| < EDGES	:	"edges" >
+| < TRUE	:	"true" >
+| < FALSE	:	"false" >
+| < STRING	:	"\"" (< S_CHAR >)* "\"" >
+| < STRING_TAIL	:	"+" ( " " | "\n" | "\t" ) * "\""  (< S_CHAR >)* "\"" >
+| < IDENTIFIER	:	< NON_DIGIT > ( < DIGIT > | < NON_DIGIT > )* >
+| < STRING_IDENTIFIER	:	"$"  (< S_CHAR >)* "$" >
+}
+
+
+TOKEN : /*helpers */
+{
+ < S_CHAR	:	~[ "\"", "$" , "\\", "\r" , "\n" ]  | < ESCAPE_SEQUENCE > >
+| < ESCAPE_SEQUENCE	:	< SIMPLE_ESCAPE_SEQUENCE > | < OCTAL_ESCAPE_SEQUENCE > | < HEXADECIMAL_ESCAPE_SEQUENCE > >
+| < HEXADECIMAL_ESCAPE_SEQUENCE	:	"\\x" (< HEXADECIMAL_DIGIT >)+ >
+| < HEXADECIMAL_DIGIT	:	< DIGIT > | [ "a" - "f", "A" - "F"] >
+| < OCTAL_ESCAPE_SEQUENCE	:"\\" < OCTAL_DIGIT > (< OCTAL_DIGIT >)? (< OCTAL_DIGIT >) ? >
+| < OCTAL_DIGIT	:	[ "0" - "7" ] >
+| < SIMPLE_ESCAPE_SEQUENCE	:	"\"" | "\\" | "\b" | "\f" | "\n" | "\r" | "\t" >
+| < NOT_STAR_SLASH : ~[ "*" , "/" ] >
+| < NOT_STAR : ~["*"] >
+| < NOT_CR_LF : ~["\r" , "\n" ] >
+| <	BLANK : ( " " | "\t" | < EOL > ) > 
+| < EOL	:	"\r\n" | "\r" | "\n" > 
+| < INTEGER	:	( "+" | "-" ) ? (< DIGIT >)+ >
+| < DOUBLE	:	( "+" | "-" ) ? ( < DIGIT >)* "." (< DIGIT >)+ ( ( "e" | "E" ) ( "+" | "-" )? (< DIGIT >)+ ) ? >
+| < NON_DIGIT	:	["a" - "z", "A" - "Z", "_"] >
+| < DIGIT	:	[ "0" - "9" ] >
+| < ALL	: ["\u0000" - "\u007f"] >
+}
+
+//Os comentarios em cima dos tokens são os resultados esperados sendo $ com tenho a frente
+// um identificador para um token ( Omar Castro )
+
+void sintax_analyse() :{}
+{
+graph_list()
+}
+
+void graph_list() :{}
+{
+  ( graph_block() )*
+}
+
+void graph_block() :
+{Token t;}
+{
+		t=< IDENTIFIER >{System.out.println("IDENTIFIER = " +t.image);}		
+ 		name() <L_BKT> ( block() )* <R_BKT>
+}
+
+void name(): {Token t;}
+{
+	t=<IDENTIFIER>{System.out.println("NAME = " +t.image);}
+	| t=< STRING_IDENTIFIER >{System.out.println("strblock = " +t.image);}
+}
+//
+void block(): {Token t;}
+{  // basedon { (basedonExpression)* } | topology { ($topologyList)* }
+	t=<BASEDON>{System.out.println("\nON BASEDON");} basedon_body()
+| t=<TOPOLOGY>{System.out.println("\nON TOPOLOGY");} topology_body()
+| t=<INTERFACE>{System.out.println("\nON INTERFACE");} interface_body()
+| t=<PARAMETER>{System.out.println("\nON PARAMETER");} parameter_body()
+}
+
+
+void basedon_body(): {}
+{  // { ($basedonExpression)* }
+	< L_BKT > basedon_expression()  < R_BKT >
+
+}
+
+void basedon_expression(): {}
+{	//$name ;
+	name() < SEMICOLON >
+} 	
+
+void topology_body(): {}
+{
+  // { ($topologyList)* }
+	< L_BKT > (topology_list())*  < R_BKT >
+}
+
+void topology_list(): {}
+{
+  ( // node = $nodeDefinition ( , $nodeDefinition )* ;
+  {System.out.println("NODES");}	< NODES > <EQUAL > name() (node_identifier_tail())* < SEMICOLON >
+	)|( // edges = $edgeDefinition ( , $edgeDefinition )* ;
+	 {System.out.println("\nEDGES");}
+	 < EDGES > <EQUAL > edge_definition() (edge_definition_tail())* < SEMICOLON >
+	)
+} 	
+
+void node_identifier_tail(): {}
+{
+  // , $nodeDefinition
+  < COMMA > name()
+}
+
+void edge_definition(): {}
+{
+  // $edgeName ( $sourceName , $sinkName  )
+  {System.out.print("\n");} 
+  name() < L_PAR > {System.out.print("NODE 1:");} name() < COMMA > {System.out.print("NODE 2:");} name() < R_PAR > 
+}
+
+void edge_definition_tail(): {}
+{
+  // ; $edgeDefinition
+  < COMMA > edge_definition()
+}
+
+void interface_body(): {}
+{  	//l_bkt interface_expression * r_bkt
+	< L_BKT > (interface_expression())*  < R_BKT >
+
+}
+
+void interface_expression(): {}
+{		
+ 	( //{input} 	inputs equal port_definition port_definition_tail * semicolon
+ 	{System.out.println("\nINPUTS: ");}
+    <INPUTS> <EQUAL> port_definition() (port_definition_tail())*  < SEMICOLON >
+	)|( //{output} 	outputs equal port_definition port_definition_tail * semicolon
+	{System.out.println("\nOUTPUTS:");}
+	 <OUTPUTS> <EQUAL> port_definition() (port_definition_tail())* < SEMICOLON >
+	)
+}
+
+void port_definition(): {}
+{
+  // {plain} 	name
+ 	//{node} 	[port]:name colon [node]:name
+  {System.out.println("NODE: ");} name() < COLON > name()
+ | {System.out.println("PLAIN: ");} name()
+}
+
+void port_definition_tail(): {}
+{
+  //	comma port_definition
+  < COMMA > port_definition()
+}
+
+void parameter_body(): {}
+{  //l_bkt parameter_expression * r_bkt
+	< L_BKT > (parameter_expression())*  < R_BKT >
+
+}
+
+void parameter_expression(): {}
+{
+	( //{value} name param_type ? equal value semicolon
+ 	{System.out.println("\nVALUE: ");}
+    name() (param_type())? <EQUAL> value()  <SEMICOLON>
+	)|( // {range} 	name param_type ? colon range_block semicolon
+	{System.out.println("\nRANGE:");}
+	 name() (param_type())? <COLON> range_block()  <SEMICOLON>
+	)|//{blank} name param_type ? semicolon
+	{System.out.println("\nBLANK:");}
+	 name() (param_type())? <SEMICOLON>
+}
+
+void range_block(): {}
+{
+	//	range range_tail *
+	range() (range_tail)*
+}
+
+void range() : {Token t1,t2;}
+{
+	// {closed_closed}	l_sqr [left]:number comma [right]:number r_sqr
+	<L_SQR> t1=number(){System.out.println("n_left= " + t1.image)} < COMMA > t2=number(){System.out.println("n_right= "+ t2.image)} <R_SQR>
+	// |	{open_closed}	l_par [left]:number comma [right]:number r_sqr
+	| <L_PAR> t1=number(){System.out.println("n_left= " + t1.image)} < COMMA > t2=number(){System.out.println("n_right= "+ t2.image)} <R_SQR>
+	// |	{closed_open}	l_sqr [left]:number comma [right]:number r_par
+	| <L_SQR> t1=number(){System.out.println("n_left= " + t1.image)} < COMMA > t2=number(){System.out.println("n_right= "+ t2.image)} <R_PAR>
+	// |{open_open}	l_par [left]:number comma [right]:number r_par
+	| <L_PAR> t1=number(){System.out.println("n_left= " + t1.image)} < COMMA > t2=number(){System.out.println("n_right= "+ t2.image)} <R_PAR>
+	// |	{discrete}	l_bkt number discrete_range_number_tail * r_bkt
+	| <L_BKT> t1=number(){System.out.println("n_left= " + t1.image)} (discrete_range_number_tail())* <R_BKT>
+}
+
+void discrete_range_number_tail() : {Token t1;}
+{
+	// comma number
+	<COMMA> t1=number(){System.out.println("number= " + t1.image)}
+}
+
+void range_tail() : {}
+{
+	// plus range
+	<PLUS> range()
+}
+
+void param_type(): {}{	//	colon string
+	< COLON> <STRING>
+}
+
+void value(): {}
+{
+	//{integer} 	integer
+	{System.out.println("\nINTEGER:");} <INTEGER>
+	//{double} 	double
+	{System.out.println("\nDOUBLE:");} <DOUBLE>
+	// 	{complex} 	complex
+	{System.out.println("\nCOMPLEX:");} complex()
+	//{numeric_matrix} 	l_sqr numeric_row numeric_row_tail * r_sqr
+	{System.out.println("\nNUMERIC_MATRIX:");} <L_SQR> numeric_row() (numeric_row_tail())* <R_SQR>
+	// {complex_matrix} 	l_sqr complex_row complex_row_tail * r_sqr
+	{System.out.println("\nCOMPLEX_MATRIX:");} <L_SQR> complex_row() (complex_row_tail())* <R_SQR>
+	// {string} 	concatenated_string_value
+	{System.out.println("\nSTRING:");} concatenated_string_value()
+	// {boolean} 	boolean_value
+	{System.out.println("\nBOOLEAN:");} boolean_value()
+	// {array} 	l_bkt value value_tail * r_bkt
+	{System.out.println("\nARRAY:");} <L_BKT> value() (value_tail())* <R_BKT>
+}
+
+void complex(): {}
+{
+	//l_par [real]:number comma [imag]:number r_par
+	<L_PAR> {System.out.println("\nREAL:");} number() <COMMA>
+	{System.out.println("\nIMAG:");} number() <R_PAR>
+}
+
+void number(): {}
+{
+	//	{double} 	double
+	{System.out.println("\nDOUBLE:");} <DOUBLE>
+ 	//{integer} 	integer
+ 	{System.out.println("\nINTEGER:");} <INTEGER>
+ }
+
+ void numeric_row(): {}
+{
+	//number numeric_tail *
+	number() (numeric_tail())*
+}
+
+ void numeric_tail(): {}
+{
+	//comma number
+	<COMMA> number() 
+}
+
+ void numeric_row_tail(): {}
+{
+	//semicolon numeric_row
+	<SEMICOLON> numeric_row() 
+}
+
+ void complex_row(): {}
+{
+	//complex complex_tail * 
+	complex() (complex_tail())*
+}
+
+ void complex_tail(): {}
+{
+	//comma complex
+	<COMMA> complex()
+}
+
+ void complex_row_tail(): {}
+{
+	//semicolon complex_row
+	<SEMICOLON> complex_row()
+}
+
+ void concatenated_string_value(): {}
+{
+	//string string_tail *
+	<STRING> (string_tail())*
+}
+
+ void string_tail(): {}
+{
+	//string string_tail *
+	<STRING> (<STRING_TAIL>)*
+}
+
+ void boolean_value(): {}
+{
+	//	{true} 	true
+	< TRUE>
+	//{false} 	false
+	| < FALSE>
+}
+
+
+void value_tail():{}
+{	//comma value
+	< COMMA> value()
+}
+
+
+
+

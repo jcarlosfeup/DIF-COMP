@@ -1,0 +1,107 @@
+import java.util.ArrayList;
+
+
+
+public class IntermediateRepresentation {
+	    private IRNode root;
+	    
+	    public IntermediateRepresentation(SimpleNode AST) {
+	        root = new IRNode("Start");
+	    }
+	    
+	    public void analyse(SimpleNode AST){
+	    	int num=AST.jjtGetNumChildren();
+	    	for(int i=0;i<num;++i){
+	    		SimpleNode simplenode= (SimpleNode) AST.jjtGetChild(i);
+	    		IRNode node = new IRNode(simplenode.val.image);
+	    		analyseGraph(node,simplenode);	    		
+	    		root.appendNode(node);
+	    	}
+	    }
+	    
+	    public void analyseGraph(IRNode parentnode, SimpleNode ASTNode){
+	    	int num=ASTNode.jjtGetNumChildren();
+	    	for(int i=0;i<num;++i){
+	    		SimpleNode simplechildnode = (SimpleNode) ASTNode.jjtGetChild(i);
+				switch(simplechildnode.id){
+				case difTreeConstants.JJTTOPOLOGY: parentnode.appendNode(createEdges(simplechildnode));	break;
+				}
+	    	}
+	    }
+	    
+	    public IRNode createEdges(SimpleNode ASTNode){
+	    	IRNode edgesnode= new IRNode("Edges");
+	    	int num=ASTNode.jjtGetNumChildren();
+	    	
+	    	for(int i=0;i<num;++i){
+	    		SimpleNode simpleChildNode = (SimpleNode) ASTNode.jjtGetChild(i);
+	    		if(simpleChildNode.id==difTreeConstants.JJTEDGES){
+	    			int childnum=simpleChildNode.jjtGetNumChildren();
+	    			for(int j=0;j<childnum;++j){
+	    				edgesnode.appendNode(newEdgeNode((SimpleNode) simpleChildNode.jjtGetChild(j)));
+	    			}
+	    		}
+	    	}
+	    	return edgesnode;
+	    }
+	    
+	    private IRNode newEdgeNode(SimpleNode ASTEdgeNode){
+	    	IRNode edge= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(0)).val.image);
+	    	IRNode node1= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(1)).val.image);
+	    	IRNode node2= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(2)).val.image);
+	    	edge.appendNode(node1);
+	    	edge.appendNode(node2);
+	    	return edge;
+
+	    }
+	    
+	    public void dump(String prefix){
+	    	root.dump(prefix);
+	    }
+	    
+	    
+	    
+
+	    /**
+	     * Nó da Arvore da Representação intermédia
+	     * criado para facilitar a criação de nós da arvore
+	     * 
+	     * neste momento ja nao e preciso guardar informacoes da
+	     * linha de codigo e outras relacionadas com a verificacao de erros
+	     * pois por nesta fase o codigo nao deverá ter erros
+	     * 
+	     * @author ei08158
+	     *
+	     */
+	    public class IRNode {
+	        private String data;
+	        private IRNode parent;
+	        private ArrayList<IRNode> children=new ArrayList<IRNode>();
+	        
+	        public IRNode(String data){
+	        	this.data=data;
+	        }
+	        public void appendNode(IRNode e){
+	        	e.parent = this;
+	        	children.add(e);
+	        }
+	        public IRNode  parent() { return parent;}
+	        public String toString(){ return data;  }
+	    
+	    
+	    public void dump(String prefix) {
+	    	if(children.size()==0){
+	    		System.out.println(prefix + data);
+	    	}
+	    	else{
+	    		System.out.println(prefix + data + ":");
+	    		for (IRNode node: children) {
+	  	    	  node.dump(prefix + " ");
+	  	      }
+	    	}
+	    	
+	    }
+	  
+	}
+	    
+}

@@ -1,0 +1,70 @@
+psdf decimateSubinit {
+topology { nodes = Propagate; }
+interface {
+inputs = a:Propagate;
+outputs = d:Propagate;
+}
+consumption { a = 1; }
+production { d = 1; }
+}
+psdf decimateInit {
+topology { nodes = rndInt2; }
+interface { outputs = e:rndInt2; }
+production { e = 1; }
+}
+psdf decimateBody {
+topology { nodes = dnSmpl; }
+interface {
+inputs = b:dnSmpl;
+outputs = c:dnSmpl;
+}
+parameter {
+factor;
+phase;
+}
+consumption { b = factor; }
+production { c = 1; }
+}
+psdfSubsystem decimate {
+interface {
+inputs = A:subinit, B:body;
+outputs = C:body;
+}
+refinement { decimateInit = init; }
+refinement {
+decimateSubinit = subinit;
+a : A;
+}
+refinement {
+decimateBody = body;
+b : B;
+c : C;
+}
+paramConfig {
+decimateBody.factor =
+decimateInit.e;
+decimateBody.phase =
+decimateSubinit.d;
+}
+}
+psdf exampleBody {
+topology {
+nodes = rndInt5, rndInt1,
+decimate, print;
+edges = e1(rndInt5, decimate),
+e2(rndInt1, decimate),
+e3(decimate, print);
+}
+refinement {
+decimate = decimate;
+A : e1; B : e2; C : e3;
+}
+production {
+e1 = 5; e2 = 1;
+}
+consumption { e3 = 1; }
+}
+psdfSubsystem example {
+refinement { decimate = body; }
+}
+

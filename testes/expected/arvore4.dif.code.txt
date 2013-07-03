@@ -1,0 +1,13 @@
+digraph bdfDemo1 {
+SRC -> SWITCH [label=e1,taillabel="1",headlabel="1"]
+SRC -> CONTROL [label=e2,taillabel="1",headlabel="1"]
+CONTROL -> BROADCAST [label=e3,taillabel="1",headlabel="1"]
+BROADCAST -> SWITCH [label=e4,taillabel="1",headlabel="1"]
+BROADCAST -> SELECT [label=e5,taillabel="1",headlabel="1"]
+SWITCH -> ACTOR1 [label=e6,taillabel="[1,0]",headlabel="1"]
+SWITCH -> ACTOR2 [label=e7,taillabel="[0,1]",headlabel="1"]
+ACTOR1 -> SELECT [label=e8,taillabel="1",headlabel="[1,0]"]
+ACTOR2 -> SELECT [label=e9,taillabel="1",headlabel="[0,1]"]
+SELECT -> SINK [label=e10,taillabel="1",headlabel="1"]
+}
+

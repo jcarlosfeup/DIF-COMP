@@ -1,0 +1,63 @@
+Start
+ Graph
+  name { G1 }
+  Topology
+   nodes
+    node { n1 }
+    node { n2 }
+    node { n3 }
+   edges
+    edge
+     name { e1 }
+     begin { n1 }
+     end { n3 }
+    edge
+     name { e2 }
+     begin { n2 }
+     end { n3 }
+  Interface
+   inputs
+    Port
+     name { p1 }
+     node { n1 }
+    Port
+     name { p2 }
+     node { n2 }
+   outputs
+    Port
+     name { p3 }
+     node { n3 }
+ Graph
+  name { G2 }
+  Topology
+   nodes
+    node { n4 }
+    node { n5 }
+    node { n6 }
+    node { n7 }
+   edges
+    edge
+     name { e3 }
+     begin { n4 }
+     end { n6 }
+    edge
+     name { e4 }
+     begin { n5 }
+     end { n6 }
+    edge
+     name { e5 }
+     begin { n6 }
+     end { n7 }
+  Refinement
+   definition
+    name { G1 }
+    node { n6 }
+   expression
+    name { p1 }
+    name { e3 }
+   expression
+    name { p2 }
+    name { e4 }
+   expression
+    name { p3 }
+    name { e5 }

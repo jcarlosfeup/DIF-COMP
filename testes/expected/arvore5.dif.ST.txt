@@ -1,0 +1,96 @@
+G2:
+  e3:
+    nome: e3
+    tipo: Aresta
+    info:
+      graph: G2
+      start: n4
+      end: n6
+  e4:
+    nome: e4
+    tipo: Aresta
+    info:
+      graph: G2
+      start: n5
+      end: n6
+  n5:
+    nome: n5
+    tipo: No
+    info:
+      graph: G2
+  n4:
+    nome: n4
+    tipo: No
+    info:
+      graph: G2
+  G2:
+    nome: G2
+    tipo: Grafo
+  n7:
+    nome: n7
+    tipo: No
+    info:
+      graph: G2
+  n6:
+    nome: n6
+    tipo: No
+    info:
+      graph: G2
+  e5:
+    nome: e5
+    tipo: Aresta
+    info:
+      graph: G2
+      start: n6
+      end: n7
+G1:
+  n1:
+    nome: n1
+    tipo: No
+    info:
+      graph: G1
+  e1:
+    nome: e1
+    tipo: Aresta
+    info:
+      graph: G1
+      start: n1
+      end: n3
+  e2:
+    nome: e2
+    tipo: Aresta
+    info:
+      graph: G1
+      start: n2
+      end: n3
+  p3:
+    nome: p3
+    tipo: porta de saida
+    info:
+      node: n3
+      graph: G1
+  p2:
+    nome: p2
+    tipo: porta de entrada
+    info:
+      node: n2
+      graph: G1
+  p1:
+    nome: p1
+    tipo: porta de entrada
+    info:
+      node: n1
+      graph: G1
+  n3:
+    nome: n3
+    tipo: No
+    info:
+      graph: G1
+  n2:
+    nome: n2
+    tipo: No
+    info:
+      graph: G1
+  G1:
+    nome: G1
+    tipo: Grafo

@@ -1,0 +1,324 @@
+import java.util.*;
+
+public class AnaliseSemantica {
+
+	SymbolTable table;
+	SimpleNode IR; //Representacao intermaedia 
+
+	public AnaliseSemantica(SymbolTable _table){
+		table= _table;	
+	}
+
+	public void analyse(SimpleNode node){
+
+	}
+
+	/**
+	 * Analisa o bloco graph
+	 * 
+	 * Analisa o grafo todo
+	 */
+	public void analyseGraph(SimpleNode node){
+		
+	}
+
+
+
+
+
+	/**
+	 * analisa o bloco "Interface" do grafo 
+	 * 
+	 * o bloco "Interface" guarda a Interface do grafo, ou
+	 * seja, guarda a informaÃ§Ã£o sobre os nÃ³s de entrada e saida
+	 * 
+	 * @param node - nÃ³ do tipo JJTGRAPH
+	 */
+	protected void analyseInterface(SimpleNode node){
+
+		int size = node.jjtGetNumChildren();
+		for(int i = 0;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+			if(childNode.id == difTreeConstants.JJTINTERFACE){
+				int childSize = childNode.jjtGetNumChildren();
+				for(int j = 0;j< childSize;j++){
+					analyseInterfaceExpression((SimpleNode) childNode.jjtGetChild(j));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Analisa as expressoes da Interface os nos de entradas esperados tem que
+	 *  ter os ids JJTINPUTS ou JJTOUTPUTS
+	 * 
+	 * 
+	 * @param node - o nÃ³ tipo JJTINPUTS ou JJTOUTPUTS
+	 * 
+	 * @since o no vem com o id e os ids quando chegarem a esta fase
+	 *  de compilaÃ§Ã£o tem de ser apenas o JJTINPUTS ou JJTOUTPUTS pode-se 
+	 *  verificar se as portas sao de entrada ou de saida
+	 */
+	protected void analyseInterfaceExpression(SimpleNode node){
+		int size=node.jjtGetNumChildren();
+		String nodeType = (node.id == difTreeConstants.JJTINPUTS)?"inputs":"outputs";
+
+		for(int iter=0;iter<size;iter++){
+			// nÃ³ "Port"
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(iter); 
+			int childsize=childNode.jjtGetNumChildren();
+			for(int childiter=0;childiter<childsize;childiter++){
+				NodeInformation portname=((SimpleNode) childNode.jjtGetChild(0)).val;
+				NodeInformation nodeName=((SimpleNode) childNode.jjtGetChild(1)).val;
+					//TODO: verificar a existencia de nos
+			}
+		}
+	}
+
+	/**
+	 * Analisa o bloco "Parameter"
+	 * @param node
+	 */
+	protected void analyseParameter(SimpleNode node){
+
+		int size = node.jjtGetNumChildren();
+		for(int i = 0;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+
+			if(childNode.id == difTreeConstants.JJTPARAMETERS){
+				int child_size = childNode.jjtGetNumChildren();
+				for(int j = 0;j < child_size;j++){
+
+					SimpleNode childnod = (SimpleNode) childNode.jjtGetChild(j);
+
+
+				}
+			}
+		}
+	}
+
+	public Symbol addParameter(Symbol sym,SimpleNode node,int child_size, int iterator){
+		if(child_size > iterator){
+			SimpleNode childNode=(SimpleNode)node.jjtGetChild(iterator);
+			switch(childNode.id){
+			case difTreeConstants.JJTTYPE:
+				sym.info.put("tipo", childNode.val);
+				return addParameter(sym,node,child_size,iterator+1);
+			case difTreeConstants.JJTVALUE:
+				sym.info.put("valor", childNode.val);
+				return sym;
+			case difTreeConstants.JJTRANGE:
+				sym.info.put("intervalo", parseRange(childNode));
+				return sym;
+			default:
+				return sym;
+			}
+		}
+		return sym;
+	}
+
+
+	public Object parseRange(SimpleNode node){
+		String returnStr;
+		SimpleNode firstchild=(SimpleNode)node.jjtGetChild(0);
+
+		if(firstchild.id==difTreeConstants.JJTNUMBER){
+			ArrayList<Integer> numbers = new ArrayList<Integer>();
+			numbers.add(Integer.parseInt(firstchild.val.image));
+			for(int i = 1; i < node.jjtGetNumChildren();i++){
+				numbers.add(Integer.parseInt(((SimpleNode)node.jjtGetChild(i)).val.image));
+			}
+			return numbers;
+		}
+		else{
+
+			returnStr = ((firstchild.id == difTreeConstants.JJTOPEN)?"(":"[")
+			+  ((SimpleNode)node.jjtGetChild(1)).val
+			+ ((SimpleNode)node.jjtGetChild(2)).val
+			+ ((((SimpleNode)node.jjtGetChild(3)).id == difTreeConstants.JJTOPEN)?")":"]");
+
+			return returnStr;
+		}
+	}
+
+	/**
+	 * Analisa o bloco "Refinement"
+	 * @param node
+	 */
+	protected void analyseRefinement(SimpleNode node){
+
+		int size = node.jjtGetNumChildren();
+		for(int i = 0;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+
+			if(childNode.id == difTreeConstants.JJTDEFINITION){
+
+				SimpleNode node_graph = (SimpleNode) childNode.jjtGetChild(0);
+				SimpleNode node_node = (SimpleNode) childNode.jjtGetChild(1);
+
+				//TODO
+				if(table.exists(node_graph.val,Symbol.GRAPH) && table.exists(node_node.val,Symbol.NODE)){
+
+				}
+				else{
+					System.err.println("Erro!O bloco Graph não existe");
+					System.exit(1);
+				}
+			}
+
+			if(childNode.id == difTreeConstants.JJTEXPRESSION){
+				int child_size = childNode.jjtGetNumChildren();
+				for(int j = 0;j < child_size;j++){
+
+					SimpleNode childExpr = (SimpleNode) node.jjtGetChild(j);
+
+					if(childExpr.id == difTreeConstants.JJTPORT){
+						checkPorts(childExpr);
+					}
+					else if(childExpr.id == difTreeConstants.JJTPARAMETERS){
+						checkParams(childExpr);
+					}
+					else{
+						System.err.println("Erro!");
+						System.exit(1);
+					}
+
+
+				}
+			}
+		}
+	}
+
+	public void checkPorts(SimpleNode node){
+
+		SimpleNode node_port = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode node_element = (SimpleNode) node.jjtGetChild(1);
+
+		if(table.exists(node_port.val,Symbol.PORT) && table.exists(node_element.val,Symbol.ELEMENT)){
+
+		}
+		else{
+			System.err.println("Erro!O bloco Ports não existe");
+			System.exit(1);
+		}
+	}
+
+	public void checkParams(SimpleNode node){
+		
+		SimpleNode node_subparam = (SimpleNode) node.jjtGetChild(0);
+		SimpleNode node_param = (SimpleNode) node.jjtGetChild(1);
+
+		if(table.exists(node_subparam.val,Symbol.SUBPARAM) && table.exists(node_param.val,Symbol.PARAM)){
+
+		}
+		else{
+			System.err.println("Erro!O bloco Params não existe");
+			System.exit(1);
+		}
+
+	}
+	
+	/**
+	 * Analisa o bloco "Builtin attribute"
+	 * @param node
+	 */
+	protected void analyseBuiltinAttr(SimpleNode node){
+
+		int size = node.jjtGetNumChildren();
+
+		for(int i = 1;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+			int childsize = childNode.jjtGetNumChildren();
+			NodeInformation childname = ((SimpleNode) childNode.jjtGetChild(0)).val;
+			for(int j = 1;j< childsize;j++){
+				SimpleNode grandchildNode = (SimpleNode) childNode.jjtGetChild(j);
+				if(childNode.id == difTreeConstants.JJTVALUE){
+
+					if(!table.exists(childNode.val)){
+						System.err.println("Erro!");
+						System.exit(1);
+					}
+				}
+				else if(childNode.id == difTreeConstants.JJTNAME){
+
+					/**Significa que é um reference*/
+					if(childsize == 2){
+
+						if(table.exists(childNode.val,Symbol.ELEMENT)){
+
+						}
+						else{
+							System.err.println("Erro!");
+							System.exit(1);
+						}
+					}
+					/** subelement_assign*/
+					else if(j > 1){
+
+
+					}
+
+				}
+				else if(childNode.id == difTreeConstants.JJTID_TAIL){
+
+
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Analisa o bloco "actor_body"
+	 * @param node
+	 */
+	protected void analyseActorBody(SimpleNode node){
+
+		int size = node.jjtGetNumChildren();
+
+		for(int i = 3;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+			int childsize = childNode.jjtGetNumChildren();
+			NodeInformation childname = ((SimpleNode) childNode.jjtGetChild(0)).val;
+			for(int j = 1;j< childsize;j++){
+				SimpleNode grandchildNode = (SimpleNode) childNode.jjtGetChild(j);
+				if(childNode.id == difTreeConstants.JJTVALUE){
+
+					if(!table.exists(childNode.val)){
+						System.err.println("Erro!");
+						System.exit(1);
+					}
+				}
+				else if(childNode.id == difTreeConstants.JJTNAME){
+
+					/**Significa que é um reference*/
+					if(childsize == 2){
+
+						if(table.exists(childNode.val,Symbol.ELEMENT)){
+
+						}
+						else{
+							System.err.println("Erro!");
+							System.exit(1);
+						}
+					}
+					/** subelement_assign*/
+					else if(j > 1){
+
+
+					}
+
+				}
+				else if(childNode.id == difTreeConstants.JJTID_TAIL){
+
+
+				}
+			}
+		}
+	}
+
+
+
+
+
+}

@@ -1,0 +1,475 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+ 
+options
+{
+  LOOKAHEAD = 1;
+  NODE_DEFAULT_VOID = true;
+}
+
+PARSER_BEGIN(dif)
+import java.io.*;
+ 
+
+public class dif
+{
+	
+	
+public static void main(String args []) throws ParseException
+  {
+
+
+    int mid= args[0].lastIndexOf(".");
+    
+  String ext=args[0].substring(mid+1,args[0].length());  
+   FileInputStream input_file = null;
+
+	try {
+		input_file = new FileInputStream(args[0]);
+
+	} catch (FileNotFoundException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}    //eg1 parser = new eg1(System.in);
+
+
+
+		if(ext.equalsIgnoreCase("yaml")){
+		  IntermediateRepresentation IR= new IntermediateRepresentation(input_file);
+		 IR.dump("");
+	}
+	else	{	  
+    dif parser = new dif(input_file);
+
+
+      SimpleNode root = parser.sintax_analyse();
+      SymbolTable table = new SymbolTable(root);
+      IntermediateRepresentation IR= new IntermediateRepresentation(root);
+
+      if(args.length < 2)
+      {
+		root.dump("");
+      }
+      else
+      {
+        if(args[1].equals("symbolTable"))
+        {
+			table.dump("");
+        }
+        else if(args[1].equals("IR"))
+        {
+          IR.dump("");
+        }
+        else if(args[1].equals("IRTable"))
+        {
+          System.out.println("Intermediate Representation:");
+          IR.dump(" ");
+          System.out.println("Symbol Table:");
+          table.dump(" ");
+          
+        }
+    }
+      
+              }
+		
+    
+  }
+}
+
+PARSER_END(dif)
+
+SKIP :
+{
+ < IGNORE :  " " | < COMMENT > | < BLANK > >
+}
+
+
+TOKEN : /*comments*/
+{ 
+ < COMMENT	:	< LONG_COMMENT > | < SHORT_COMMENT > >
+| < LONG_COMMENT	:	"/*"( (< NOT_STAR >)* "*" | ( < NOT_STAR_SLASH > (< NOT_STAR >)* ("*")+ ) )* "/" >  /**/
+| < SHORT_COMMENT	:	"//" (< NOT_CR_LF >)* < EOL > >
+}
+
+TOKEN : /*tokens */
+{
+< L_BKT	:	"{" >
+| < R_BKT	:	"}" >
+| < L_PAR	:	"(" >
+| < R_PAR	:	")" >
+| < L_SQR	:	"[" >
+| < R_SQR	:	"]" >
+| < SEMICOLON	:	";" >
+| < COLON	:	":" >
+| < COMMA	:	"," >
+| < S_QTE	:	"\"" >
+| < PLUS	:	"+" >
+| < EQUAL	:	"=" >
+| < DOT	:	"." >
+| < GRAPH	:	"graph" >
+| < ATTRIBUTE	:	"attribute" >
+| < BASEDON	:	"basedon" >
+| < INTERFACE	:	"interface" >
+| < PARAMETER	:	"parameter" >
+| < REFINEMENT	:	"refinement" >
+| < TOPOLOGY	:	"topology" >
+| < ACTOR	:	"actor" >
+| < INPUTS	:	"inputs" >
+| < OUTPUTS	:	"outputs" >
+| < NODES	:	"nodes" >
+| < EDGES	:	"edges" >
+| < TRUE	:	"true" >
+| < FALSE	:	"false" >
+| < STRING	:	"\"" (< S_CHAR >)* "\"" >
+| < STRING_TAIL	:	"+" ( " " | "\n" | "\t" ) * "\""  (< S_CHAR >)* "\"" >
+| < IDENTIFIER	:	< NON_DIGIT > ( < DIGIT > | < NON_DIGIT > )* >
+| < STRING_IDENTIFIER	:	"$"  (< S_CHAR >)* "$" >
+}
+
+
+TOKEN : /*helpers */
+{
+ < INTEGER	:	( "+" | "-" ) ? (< DIGIT >)+ >
+| < DOUBLE	:	( "+" | "-" ) ? ( < DIGIT >)* "." (< DIGIT >)+ ( ( "e" | "E" ) ( "+" | "-" )? (< DIGIT >)+ ) ? >
+| < S_CHAR	:	~[ "\"", "$" , "\\", "\r" , "\n" ] >
+| < ESCAPE_SEQUENCE	:	< SIMPLE_ESCAPE_SEQUENCE > | < OCTAL_ESCAPE_SEQUENCE > | < HEXADECIMAL_ESCAPE_SEQUENCE > >
+| < HEXADECIMAL_ESCAPE_SEQUENCE	:	"\\x" (< HEXADECIMAL_DIGIT >)+ >
+| < HEXADECIMAL_DIGIT	:	< DIGIT > | [ "a" - "f", "A" - "F"] >
+| < OCTAL_ESCAPE_SEQUENCE	:"\\" < OCTAL_DIGIT > (< OCTAL_DIGIT >)? (< OCTAL_DIGIT >) ? >
+| < OCTAL_DIGIT	:	[ "0" - "7" ] >
+| < SIMPLE_ESCAPE_SEQUENCE	:	"\"" | "\\" | "\b" | "\f" | "\n" | "\r" | "\t" >
+| < NOT_STAR_SLASH : ~[ "*" , "/" ] >
+| < NOT_STAR : ~["*"] >
+| < NOT_CR_LF : ~["\r" , "\n" ] >
+| <	BLANK : ( " " | "\t" | < EOL > ) > 
+| < EOL	:	"\r\n" | "\r" | "\n" > 
+| < NON_DIGIT	:	["a" - "z", "A" - "Z", "_"] >
+| < DIGIT	:	[ "0" - "9" ] >
+| < ALL	: ["\u0000" - "\u007f"] >
+}
+
+
+SimpleNode sintax_analyse()#Start :{}
+{
+graph_list() {return jjtThis;}
+}
+
+
+
+void graph_list() :{}
+{
+  ( graph_block() )*
+}
+
+void graph_block()#Graph :
+{}
+{
+ 		< IDENTIFIER > name() <L_BKT> ( block() )* <R_BKT>
+}
+
+void block(): {}
+{	 
+
+  (<BASEDON> basedon_body() )#Basedon
+| (<TOPOLOGY> topology_body() )#Topology
+| (<INTERFACE> interface_body() )#Interface
+| (<PARAMETER> parameter_body() )#Parameters
+| (<REFINEMENT> refinement_body() ) #Refinement
+| (builtInAttrName() attribute_body() ) #BuiltInAttribute
+| (<ATTRIBUTE> name() attribute_body() )#Attribute
+| (<ACTOR> name() actor_body() )#Actor
+
+}
+
+
+void basedon_body(): {}
+{ 
+	< L_BKT > basedon_expression()  < R_BKT >
+
+}
+
+void basedon_expression(): {}
+{	
+	name() < SEMICOLON >
+} 	
+
+void topology_body(): {}
+{
+	< L_BKT > (topology_list())*  < R_BKT >
+}
+
+void topology_list(): {}
+{
+  ( < NODES > <EQUAL > node_name() (node_identifier_tail())* < SEMICOLON > )#nodes 
+| ( < EDGES > <EQUAL > edge_definition() (edge_definition_tail())*  < SEMICOLON >)#edges
+} 	
+
+void node_identifier_tail(): {}
+{
+  < COMMA > node_name()
+}
+
+void edge_definition(): {}
+{
+  (name() < L_PAR > node_start() < COMMA > node_end())#edge < R_PAR > 
+}
+
+
+void edge_definition_tail(): {}
+{
+  < COMMA > edge_definition()
+}
+
+void interface_body(): {}
+{  	
+	< L_BKT > (interface_expression())*  < R_BKT >
+
+}
+
+void interface_expression(): {}
+{		
+    (<INPUTS> <EQUAL> port_definition() (port_definition_tail())*)#inputs < SEMICOLON >
+|   (<OUTPUTS> <EQUAL> port_definition() (port_definition_tail())*)#outputs  < SEMICOLON >
+
+}
+void port_definition() #Port: {}
+{
+ name() ( < COLON > node_name() )?
+}
+
+void port_definition_tail(): {}
+{
+  < COMMA > port_definition()
+}
+
+void parameter_body() : {}
+{  
+	< L_BKT > (parameter_expression())*  < R_BKT >
+
+}
+
+void parameter_expression() #Parameter: {}
+{
+	name() 
+		 (<EQUAL > value()	| <COLON> 
+			(range_block()| string_type() 
+				(<EQUAL> value() | <COLON> range_block())?
+			)
+		)? <SEMICOLON >
+}
+
+void range_block()#range : {}
+{
+	range() (range_tail())*
+}
+
+void range() : {}
+{
+	(LSQR() | LPAR()) number() <COMMA> number()  (RSQR() | RPAR())	
+	| (<L_BKT> number() (discrete_range_number_tail())* <R_BKT>)
+}
+
+void LSQR()#closed : {}
+{
+	<L_SQR>
+}
+
+void LPAR()#open : {}
+{
+	<L_PAR>
+}
+
+void RSQR()#closed : {}
+{
+	<R_SQR>
+}
+
+void RPAR()#open : {}
+{
+	<R_PAR>
+}
+
+
+void discrete_range_number_tail() : {}
+{
+	<COMMA> number()
+}
+
+void range_tail() : {}
+{
+	<PLUS> range()
+}
+
+void param_type(): {}
+{
+	< COLON> <STRING>
+}
+
+void refinement_body(): {}
+{
+  	< L_BKT > refinement_definition() (refinement_expression())* < R_BKT >
+}
+
+void refinement_definition()#definition : {}
+{
+  name() < EQUAL > node_name() < SEMICOLON >
+}
+
+void refinement_expression()#expression : {}
+{
+  name() (< COLON > | < EQUAL > ) name() < SEMICOLON >
+}
+
+void attribute_body():{}
+{
+	< L_BKT > (attribute_expression())* < R_BKT >
+}
+
+void attribute_expression() #expression: {}
+{
+	name() ((< EQUAL > val_name_list() < SEMICOLON >)|(< DOT > name() < EQUAL > name() < DOT > name() < SEMICOLON >))
+
+}
+
+void val_name_list():{}
+{
+ value() 
+| name() ((ref_id_tail())+)?
+}
+
+
+void ref_id_tail()#id_tail: {}
+{
+	< COMMA > name()
+}
+
+void actor_body() : {}
+{
+	< L_BKT > (actor_expression())* < R_BKT >
+}
+
+void actor_expression() : {}
+{
+	(name() (type())? < EQUAL > (val_name_list())#value)#attribute < SEMICOLON >
+}
+
+void complex(): {}
+{
+	<L_PAR> number() <COMMA> number() <R_PAR>
+}
+
+
+
+ void numeric_row(): {}
+{
+	number() (numeric_tail())*
+}
+
+ void numeric_tail(): {}
+{
+	<COMMA> number() 
+}
+
+ void numeric_row_tail(): {}
+{
+	<SEMICOLON> numeric_row() 
+}
+
+ void complex_row() : {}
+{
+	complex() (complex_tail())*
+}
+
+ void complex_tail(): {}
+{
+	<COMMA> complex()
+}
+
+ void complex_row_tail(): {}
+{
+	<SEMICOLON> complex_row()
+}
+
+void value_tail():{}
+{
+	< COMMA> value()
+}
+
+
+
+
+
+/*************FOLHAS**********/
+
+
+
+
+ void concatenated_string_value()#concatString: {Token t1,t2;}
+{
+	t1=< STRING >{jjtThis.val = new NodeInformation(t1);}
+	(t2=<STRING_TAIL>{jjtThis.val.image += t2.image;})*
+}
+
+void type() #type : {Token t1,t2;}
+{
+
+	< COLON > ((t1=< IDENTIFIER >{jjtThis.val = new NodeInformation(t1);} 
+	(< COLON > t2=< STRING > {jjtThis.val.image +=","+t2.image;})?)
+	|(< COLON > < COLON > t1=< STRING >{jjtThis.val = new NodeInformation(t1);}))
+
+}
+
+void string_type() #type: {Token t1;}
+{
+  t1=<STRING>{jjtThis.val = new NodeInformation(t1);} 
+	
+}
+
+
+
+ void boolean_value()#bool: {Token t1;}
+{
+
+  t1=< TRUE >{jjtThis.val = new NodeInformation(t1);} 
+| t1=< FALSE >{jjtThis.val = new NodeInformation(t1);}
+}
+
+void builtInAttrName() #name: {Token t1;}
+{
+  t1=<IDENTIFIER>{jjtThis.val = new NodeInformation(t1);} 
+}
+
+void name()#name: 			{NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void node_name()#node: 		{NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void edge_name()#edge:		{NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void node_start()#begin:	{NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void node_end()#end:		{NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void attr_value()#value:    {NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+void graph_name()#graph:    {NodeInformation t1;}{ t1=ident(){jjtThis.val = t1;} }
+
+NodeInformation ident():{Token t1;}
+{
+  t1=<IDENTIFIER>{return new NodeInformation(t1);} 
+| t1=< STRING_IDENTIFIER >{return new NodeInformation(t1);}
+}
+
+
+void number() #number: {Token t1;}
+{
+  t1=<DOUBLE>{jjtThis.val = new NodeInformation(t1);} 
+| t1=<INTEGER> {jjtThis.val = new NodeInformation(t1);}
+ }
+
+
+void value()#value: {Token t1;}
+{
+  t1=<DOUBLE>{jjtThis.val = new NodeInformation(t1);} 
+| t1=<INTEGER> {jjtThis.val = new NodeInformation(t1);}
+| complex()
+| <L_SQR> ((numeric_row() (numeric_row_tail())*) | (complex_row() (complex_row_tail())*)) <R_SQR>
+| concatenated_string_value()
+| boolean_value()
+| <L_BKT> value() (value_tail())* <R_BKT>
+}
+

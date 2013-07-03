@@ -1,0 +1,36 @@
+Graph:
+  n1:
+    nome: n1
+    tipo: No
+    info:
+      graph: Graph
+  e1:
+    nome: e1
+    tipo: Aresta
+    info:
+      graph: Graph
+      start: n1
+      end: n3
+  e2:
+    nome: e2
+    tipo: Aresta
+    info:
+      graph: Graph
+      start: n2
+      end: n3
+  n3:
+    nome: n3
+    tipo: No
+    info:
+      graph: Graph
+  n2:
+    nome: n2
+    tipo: No
+    info:
+      graph: Graph
+  Graph:
+    nome: Graph
+    tipo: Grafo
+  graphID:
+    nome: graphID
+    tipo: ID

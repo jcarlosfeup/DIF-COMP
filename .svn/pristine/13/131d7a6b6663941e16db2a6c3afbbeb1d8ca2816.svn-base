@@ -1,0 +1,169 @@
+Start
+ Graph
+  name { decimateSubinit }
+  Topology
+   nodes
+    node { Propagate }
+  Interface
+   inputs
+    Port
+     name { a }
+     node { Propagate }
+   outputs
+    Port
+     name { d }
+     node { Propagate }
+  BuiltInAttribute
+   name { consumption }
+   expression
+    name { a }
+    value { 1 }
+  BuiltInAttribute
+   name { production }
+   expression
+    name { d }
+    value { 1 }
+ Graph
+  name { decimateInit }
+  Topology
+   nodes
+    node { rndInt2 }
+  Interface
+   outputs
+    Port
+     name { e }
+     node { rndInt2 }
+  BuiltInAttribute
+   name { production }
+   expression
+    name { e }
+    value { 1 }
+ Graph
+  name { decimateBody }
+  Topology
+   nodes
+    node { dnSmpl }
+  Interface
+   inputs
+    Port
+     name { b }
+     node { dnSmpl }
+   outputs
+    Port
+     name { c }
+     node { dnSmpl }
+  Parameters
+   Parameter
+    name { factor }
+   Parameter
+    name { phase }
+  BuiltInAttribute
+   name { consumption }
+   expression
+    name { b }
+    name { factor }
+  BuiltInAttribute
+   name { production }
+   expression
+    name { c }
+    value { 1 }
+ Graph
+  name { decimate }
+  Interface
+   inputs
+    Port
+     name { A }
+     node { subinit }
+    Port
+     name { B }
+     node { body }
+   outputs
+    Port
+     name { C }
+     node { body }
+  Refinement
+   definition
+    name { decimateInit }
+    node { init }
+  Refinement
+   definition
+    name { decimateSubinit }
+    node { subinit }
+   expression
+    name { a }
+    name { A }
+  Refinement
+   definition
+    name { decimateBody }
+    node { body }
+   expression
+    name { b }
+    name { B }
+   expression
+    name { c }
+    name { C }
+  BuiltInAttribute
+   name { paramConfig }
+   expression
+    name { decimateBody }
+    name { factor }
+    name { decimateInit }
+    name { e }
+   expression
+    name { decimateBody }
+    name { phase }
+    name { decimateSubinit }
+    name { d }
+ Graph
+  name { exampleBody }
+  Topology
+   nodes
+    node { rndInt5 }
+    node { rndInt1 }
+    node { decimate }
+    node { print }
+   edges
+    edge
+     name { e1 }
+     begin { rndInt5 }
+     end { decimate }
+    edge
+     name { e2 }
+     begin { rndInt1 }
+     end { decimate }
+    edge
+     name { e3 }
+     begin { decimate }
+     end { print }
+  Refinement
+   definition
+    name { decimate }
+    node { decimate }
+   expression
+    name { A }
+    name { e1 }
+   expression
+    name { B }
+    name { e2 }
+   expression
+    name { C }
+    name { e3 }
+  BuiltInAttribute
+   name { production }
+   expression
+    name { e1 }
+    value { 5 }
+   expression
+    name { e2 }
+    value { 1 }
+  BuiltInAttribute
+   name { consumption }
+   expression
+    name { e3 }
+    value { 1 }
+ Graph
+  name { example }
+  Refinement
+   definition
+    name { decimate }
+    node { body }

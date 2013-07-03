@@ -1,0 +1,5 @@
+digraph _Graph_ {
+n1 -> n3 [label=e1]
+n2 -> n3 [label=e2]
+}
+

@@ -1,0 +1,17 @@
+all: javac
+
+test:
+
+	rm -f testes/result.txt
+	testes/scripts/testes_unitarios_arvores.sh
+	
+javac: javacc
+	javac *.java
+
+javacc: jjtree
+	javacc/bin/javacc DIF.jj
+
+jjtree:
+	javacc/bin/jjtree DIF.jjt
+
+

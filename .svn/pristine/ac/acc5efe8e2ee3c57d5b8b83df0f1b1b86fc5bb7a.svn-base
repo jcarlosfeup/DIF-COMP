@@ -1,0 +1,33 @@
+Start
+ Graph
+  name { Graph }
+  Basedon
+   name { graphID }
+  Interface
+   inputs
+    Port
+     name { p1 }
+     node { n1 }
+    Port
+     name { p2 }
+     node { n2 }
+   outputs
+    Port
+     name { p3 }
+     node { n3 }
+  Basedon
+   name { graphID }
+  Topology
+   nodes
+    node { n1 }
+    node { n2 }
+    node { n3 }
+   edges
+    edge
+     name { e1 }
+     begin { n1 }
+     end { n3 }
+    edge
+     name { e2 }
+     begin { n2 }
+     end { n3 }

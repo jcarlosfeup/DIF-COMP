@@ -1,0 +1,225 @@
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+public class IntermediateRepresentation {
+    private IRNode root;
+    
+    //guarda o grafo em memoria para diminuir o tamanho do codigo
+    private IRNode currGraphNode;
+    
+    public IntermediateRepresentation(SimpleNode AST) {
+        root = new IRNode("Start");
+        analyse(AST);
+    }
+    
+    public IntermediateRepresentation(InputStream file) {
+    	  DataInputStream in = new DataInputStream(file);
+    	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    	  String strLine;
+    	  int iter = 0; 
+    	  IRNode currnode = null;
+    	  //Read File Line By Line
+    	  try {
+    		if((strLine = br.readLine()) == null){
+    			System.exit(0);
+    		}
+    		else{
+    			root = new IRNode(strLine);
+    			currnode = root;
+    		}
+			while ((strLine = br.readLine()) != null)   {
+				char[] str = strLine.toCharArray();
+				int length = str.length;
+				while(iter >= length){
+					iter--;
+					currnode = currnode.parent();
+				}
+				if(str[iter]==' '){
+					iter++;
+					currnode = new IRNode(strLine.substring(iter),currnode);
+				}
+				else if(str[iter-1]==' '){
+					currnode = new IRNode(strLine.substring(iter),currnode.parent());
+				}
+				else{
+					//decrementado para minizar os calculos com "while(str[whitespaceNumber-1]==' ');"
+					iter--;
+					do{
+						iter--;
+						currnode = currnode.parent();
+					}
+					while(str[iter]!=' ');
+					iter++;
+					currnode = new IRNode(strLine.substring(iter),currnode.parent());
+					
+					
+				}
+	
+			  // Print the content on the console
+			  //System.out.println (strLine);
+			  }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+
+    
+	/**
+	 * vaz um parsing do no value para uma string
+	 * 
+	 * @param valuenode
+	 * @return
+	 */
+	public static String parsevalue(SimpleNode valuenode){
+		if(valuenode.jjtGetNumChildren() > 0){
+			return ((SimpleNode) valuenode.jjtGetChild(0)).val.image;
+		}
+		else return valuenode.val.image;
+	}
+	
+    
+    public void analyse(SimpleNode AST){
+    	int num=AST.jjtGetNumChildren();
+    	for(int i=0;i<num;++i){
+    		SimpleNode simplenode= (SimpleNode) AST.jjtGetChild(i);
+    		//busca o nome do grafo
+    		String graphName= ((SimpleNode)simplenode.jjtGetChild(0)).val.image;
+    		currGraphNode = new IRNode(graphName);
+    		analyseGraph(simplenode);	    		
+    		root.appendNode(currGraphNode);
+    	}
+    }
+    
+    public void analyseGraph(SimpleNode ASTNode){
+    	int num=ASTNode.jjtGetNumChildren();
+    	for(int i=0;i<num;++i){
+    		SimpleNode simplechildnode = (SimpleNode) ASTNode.jjtGetChild(i);
+			switch(simplechildnode.id){
+			case difTreeConstants.JJTTOPOLOGY: analyseTopology(simplechildnode);break;
+			case difTreeConstants.JJTINTERFACE: analyseInterface(simplechildnode);break;
+			case difTreeConstants.JJTBUILTINATTRIBUTE:
+			case difTreeConstants.JJTATTRIBUTE:
+				analyseAttributes(simplechildnode);break;
+
+			}
+    	}
+    }
+    
+    protected void analyseInterface(SimpleNode node){
+		int size = node.jjtGetNumChildren();
+		for(int j = 0;j< size;j++){
+			analyseInterfaceExpression((SimpleNode) node.jjtGetChild(j));
+		}
+	
+
+}
+
+protected void analyseInterfaceExpression(SimpleNode node){
+int size=node.jjtGetNumChildren();
+String irnodename = (node.id == difTreeConstants.JJTINPUTS)?"Input":"Output";
+IRNode irNode = currGraphNode.getOrCreateChild(irnodename);
+for(int iter=0;iter<size;iter++){
+	// no "Port"
+	SimpleNode childNode = (SimpleNode) node.jjtGetChild(iter); 
+	String portname=((SimpleNode) childNode.jjtGetChild(0)).val.image;
+	String nodeName=((SimpleNode) childNode.jjtGetChild(1)).val.image;
+	IRNode portnode = new IRNode(portname,irNode);
+	IRNode nodenode = new IRNode("Node",portnode);
+	new IRNode(nodeName,nodenode);
+}
+}
+    
+    public void analyseTopology(SimpleNode ASTNode){
+    	IRNode edgesnode= new IRNode("Edges"),
+    			nodesnode=new IRNode("Nodes");
+    	int num=ASTNode.jjtGetNumChildren();
+    	
+    	for(int i=0;i<num;++i){
+    		SimpleNode simpleChildNode = (SimpleNode) ASTNode.jjtGetChild(i);
+    		if(simpleChildNode.id==difTreeConstants.JJTEDGES){
+    			int childnum=simpleChildNode.jjtGetNumChildren();
+    			for(int j=0;j<childnum;++j){
+    				edgesnode.appendNode(newEdgeNode((SimpleNode) simpleChildNode.jjtGetChild(j)));
+    			}
+    		}
+    		if(simpleChildNode.id==difTreeConstants.JJTNODES){
+    			int childnum=simpleChildNode.jjtGetNumChildren();
+    			for(int j=0;j<childnum;++j){
+    				IRNode node=new IRNode(((SimpleNode)simpleChildNode.jjtGetChild(j)).val.image);
+    				nodesnode.appendNode(node);
+    			}
+    		}
+    	}
+    	if (!edgesnode.isleaf()){
+    		currGraphNode.appendNode(edgesnode);
+    	}
+    	if(!nodesnode.isleaf()){
+    		currGraphNode.appendNode(nodesnode);
+    	}
+    }
+    
+    private IRNode newEdgeNode(SimpleNode ASTEdgeNode){
+    	IRNode edge= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(0)).val.image);
+    	IRNode node1= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(1)).val.image);
+    	IRNode node2= new IRNode(((SimpleNode)ASTEdgeNode.jjtGetChild(2)).val.image);
+    	edge.appendNode(node1);
+    	edge.appendNode(node2);
+    	return edge;
+    }
+    
+    
+    public void dump(String prefix){
+    	root.dump(prefix);
+    }
+    
+    private IRNode searchNode(String nodename){
+    	for(IRNode childnode: currGraphNode.getChildren()){
+    		IRNode elementNode = childnode.getchild(nodename);
+        	if(elementNode != null) return elementNode;
+    	}
+    	return null;
+    }
+    
+    
+    private void analyseAttributes(SimpleNode node) {
+		int size = node.jjtGetNumChildren();
+		String attributename = ((SimpleNode) node.jjtGetChild(0)).val.image;
+
+		for(int i = 1;i< size;i++){
+			SimpleNode childNode = (SimpleNode) node.jjtGetChild(i);
+			int childsize = childNode.jjtGetNumChildren();
+			NodeInformation childinfo = ((SimpleNode) childNode.jjtGetChild(0)).val;
+			
+			//cria ou busca o atributo para o no o elemento do grafo
+			IRNode elementNode = searchNode(childinfo.image);
+			if(elementNode == null){
+				System.out.println("elementNode nao encontrado :"+childinfo.image);
+				System.out.println("Arvore em questao:");
+				currGraphNode.dump("  ");
+				
+				System.exit(1);}
+			IRNode attributesNode = elementNode.getOrCreateChild("Attributes");
+	    	IRNode attrNode = attributesNode.getOrCreateChild(attributename);
+	    	
+			//mete o(s) valor(es) no atributo
+	    	for(int j = 1;j< childsize;j++){
+				SimpleNode grandchildNode = (SimpleNode) childNode.jjtGetChild(j);
+				if(grandchildNode.id == difTreeConstants.JJTVALUE){
+					new IRNode(parsevalue(grandchildNode),attrNode);
+				}
+				else if(grandchildNode.id == difTreeConstants.JJTNAME){
+					new IRNode( grandchildNode.val.image,attrNode);
+				}
+				else if(grandchildNode.id == difTreeConstants.JJTID_TAIL){
+					SimpleNode grandchildNode2 = (SimpleNode) grandchildNode.jjtGetChild(0);
+					new IRNode(grandchildNode2.val.image,attrNode);
+				}
+			}
+		}	
+	}
+}

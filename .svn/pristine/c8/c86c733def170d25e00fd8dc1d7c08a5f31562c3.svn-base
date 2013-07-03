@@ -1,0 +1,114 @@
+bdfDemo1:
+  ACTOR1:
+    nome: ACTOR1
+    tipo: No
+    info:
+      graph: bdfDemo1
+  ACTOR2:
+    nome: ACTOR2
+    tipo: No
+    info:
+      graph: bdfDemo1
+  CONTROL:
+    nome: CONTROL
+    tipo: No
+    info:
+      graph: bdfDemo1
+  e10:
+    nome: e10
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: SELECT
+      end: SINK
+  e9:
+    nome: e9
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: ACTOR2
+      end: SELECT
+  e8:
+    nome: e8
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: ACTOR1
+      end: SELECT
+  SWITCH:
+    nome: SWITCH
+    tipo: No
+    info:
+      graph: bdfDemo1
+  e7:
+    nome: e7
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: SWITCH
+      end: ACTOR2
+  e6:
+    nome: e6
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: SWITCH
+      end: ACTOR1
+  SRC:
+    nome: SRC
+    tipo: No
+    info:
+      graph: bdfDemo1
+  e5:
+    nome: e5
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: BROADCAST
+      end: SELECT
+  e3:
+    nome: e3
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: CONTROL
+      end: BROADCAST
+  e4:
+    nome: e4
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: BROADCAST
+      end: SWITCH
+  e1:
+    nome: e1
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: SRC
+      end: SWITCH
+  e2:
+    nome: e2
+    tipo: Aresta
+    info:
+      graph: bdfDemo1
+      start: SRC
+      end: CONTROL
+  SELECT:
+    nome: SELECT
+    tipo: No
+    info:
+      graph: bdfDemo1
+  SINK:
+    nome: SINK
+    tipo: No
+    info:
+      graph: bdfDemo1
+  BROADCAST:
+    nome: BROADCAST
+    tipo: No
+    info:
+      graph: bdfDemo1
+  bdfDemo1:
+    nome: bdfDemo1
+    tipo: Grafo

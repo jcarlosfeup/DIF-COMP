@@ -1,0 +1,54 @@
+Graph:
+  n1:
+    nome: n1
+    tipo: No
+    info:
+      graph: Graph
+  e1:
+    nome: e1
+    tipo: Aresta
+    info:
+      graph: Graph
+      start: n1
+      end: n3
+  e2:
+    nome: e2
+    tipo: Aresta
+    info:
+      graph: Graph
+      start: n2
+      end: n3
+  p3:
+    nome: p3
+    tipo: porta de saida
+    info:
+      node: n3
+      graph: Graph
+  p2:
+    nome: p2
+    tipo: porta de entrada
+    info:
+      node: n2
+      graph: Graph
+  n3:
+    nome: n3
+    tipo: No
+    info:
+      graph: Graph
+  p1:
+    nome: p1
+    tipo: porta de entrada
+    info:
+      node: n1
+      graph: Graph
+  n2:
+    nome: n2
+    tipo: No
+    info:
+      graph: Graph
+  Graph:
+    nome: Graph
+    tipo: Grafo
+  graphID:
+    nome: graphID
+    tipo: ID

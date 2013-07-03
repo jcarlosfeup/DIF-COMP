@@ -1,0 +1,184 @@
+Start
+ Graph
+  name { bdfDemo1 }
+  Topology
+   nodes
+    node { SRC }
+    node { SWITCH }
+    node { SELECT }
+    node { SINK }
+    node { CONTROL }
+    node { BROADCAST }
+    node { ACTOR1 }
+    node { ACTOR2 }
+   edges
+    edge
+     name { e1 }
+     begin { SRC }
+     end { SWITCH }
+    edge
+     name { e2 }
+     begin { SRC }
+     end { CONTROL }
+    edge
+     name { e3 }
+     begin { CONTROL }
+     end { BROADCAST }
+    edge
+     name { e4 }
+     begin { BROADCAST }
+     end { SWITCH }
+    edge
+     name { e5 }
+     begin { BROADCAST }
+     end { SELECT }
+    edge
+     name { e6 }
+     begin { SWITCH }
+     end { ACTOR1 }
+    edge
+     name { e7 }
+     begin { SWITCH }
+     end { ACTOR2 }
+    edge
+     name { e8 }
+     begin { ACTOR1 }
+     end { SELECT }
+    edge
+     name { e9 }
+     begin { ACTOR2 }
+     end { SELECT }
+    edge
+     name { e10 }
+     begin { SELECT }
+     end { SINK }
+  BuiltInAttribute
+   name { production }
+   expression
+    name { e1 }
+    value { 1 }
+   expression
+    name { e2 }
+    value { 1 }
+   expression
+    name { e3 }
+    value { 1 }
+   expression
+    name { e4 }
+    value { 1 }
+   expression
+    name { e5 }
+    value { 1 }
+   expression
+    name { e6 }
+    value
+     matrix
+      number { 1 }
+      number { 0 }
+   expression
+    name { e7 }
+    value
+     matrix
+      number { 0 }
+      number { 1 }
+   expression
+    name { e8 }
+    value { 1 }
+   expression
+    name { e9 }
+    value { 1 }
+   expression
+    name { e10 }
+    value { 1 }
+  BuiltInAttribute
+   name { consumption }
+   expression
+    name { e1 }
+    value { 1 }
+   expression
+    name { e2 }
+    value { 1 }
+   expression
+    name { e3 }
+    value { 1 }
+   expression
+    name { e4 }
+    value { 1 }
+   expression
+    name { e5 }
+    value { 1 }
+   expression
+    name { e6 }
+    value { 1 }
+   expression
+    name { e7 }
+    value { 1 }
+   expression
+    name { e8 }
+    value
+     matrix
+      number { 1 }
+      number { 0 }
+   expression
+    name { e9 }
+    value
+     matrix
+      number { 0 }
+      number { 1 }
+   expression
+    name { e10 }
+    value { 1 }
+  Actor
+   name { SWITCH }
+   Attribute
+    name { computation }
+    value
+     value
+      concatString { "dif.bdf.SWITCH" }
+   Attribute
+    name { control }
+    type { CONTROL }
+    value
+     name { e4 }
+   Attribute
+    name { input }
+    type { INPUT }
+    value
+     name { e1 }
+   Attribute
+    name { trues }
+    type { TRUEOUTPUT }
+    value
+     name { e6 }
+   Attribute
+    name { falses }
+    type { FALSEOUTPUT }
+    value
+     name { e7 }
+  Actor
+   name { SELECT }
+   Attribute
+    name { computation }
+    value
+     value
+      concatString { "dif.bdf.SELECT" }
+   Attribute
+    name { control }
+    type { CONTROL }
+    value
+     name { e5 }
+   Attribute
+    name { output }
+    type { OUTPUT }
+    value
+     name { e10 }
+   Attribute
+    name { trues }
+    type { TRUEOUTPUT }
+    value
+     name { e8 }
+   Attribute
+    name { falses }
+    type { FALSEOUTPUT }
+    value
+     name { e9 }
